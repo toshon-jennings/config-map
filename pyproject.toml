@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "config-map"
+version = "1.0.0"
+description = "A beautiful terminal map of your configuration files"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.7"
+authors = [
+    {name = "Toshon Jennings", email = "mstly.pcfl@gmail.com"},
+]
+keywords = ["config", "dotfiles", "terminal", "cli", "system", "audit", "map"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+dependencies = [
+    "rich>=10.0",
+]
+
+[project.scripts]
+config-map = "config_map.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/toshonjennings/config-map"
+Repository = "https://github.com/toshonjennings/config-map"
+Issues = "https://github.com/toshonjennings/config-map/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
