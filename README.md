@@ -11,23 +11,54 @@ file with path, size, last-modified, format, line count, and a **type-specific
 summary** — extracted keys for JSON/YAML/TOML, alias/export counts for shell
 configs, variable counts for `.env`, and more.
 
-Installs in one command. Runs in ~3 seconds. No configuration needed.
+Runs in ~3 seconds. No configuration needed. Read-only.
 
-## Install
-
-```bash
-pip install config-map
-```
+---
 
 ## Quick start
 
 ```bash
-config-map                       # full system config report
+pip install config-map
+config-map
 ```
 
 That's it. You get a rich terminal dashboard showing every config file on your
 machine, grouped by directory, with format, size, line count, and a short
 summary of what each file does.
+
+---
+
+## What you see
+
+Each file is displayed in a table row with:
+
+| Column | What it shows |
+|--------|---------------|
+| **File** | Path (relative to ~) |
+| **Format** | JSON / YAML / TOML / ENV / SHELL / PLIST / INI, etc. |
+| **Size** | Human-readable (B / KB / MB) |
+| **Lines** | Line count (skips files >5 MB) |
+| **Modified** | Last modified date and time |
+| **Purpose / Summary** | What the file is for + extracted structure |
+
+### Type-specific summaries
+
+The script recognizes 60+ config file types and extracts meaningful summaries:
+
+- **JSON** → top-level keys (e.g., `name, version, main, scripts, dependencies`)
+- **YAML** → top-level keys
+- **TOML** → top-level sections/keys (e.g., `[tool.poetry], [build-system]`)
+- **.env** → variable count (e.g., `12 variables`)
+- **Shell configs** → alias/export/function counts (e.g., `9 aliases, 21 exports`)
+- **.gitconfig** → section list (e.g., `user, core, alias, push, pull`)
+- **SSH config** → Host entries
+- **Plists** → top-level keys
+- **INI/CFG** → section headers
+
+A header panel shows aggregate stats: total file count, total size, format
+breakdown, and number of directories scanned.
+
+---
 
 ## Usage
 
@@ -62,35 +93,7 @@ config-map --dotfiles --search git
 config-map --config
 ```
 
-## What you see
-
-Each file is displayed in a table row with:
-
-| Column | What it shows |
-|--------|---------------|
-| **File** | Path (relative to ~) |
-| **Format** | JSON / YAML / TOML / ENV / SHELL / PLIST / INI, etc. |
-| **Size** | Human-readable (B / KB / MB) |
-| **Lines** | Line count (skips files >5 MB) |
-| **Modified** | Last modified date and time |
-| **Purpose / Summary** | What the file is for + extracted structure |
-
-### Type-specific summaries
-
-The script recognizes 60+ config file types and extracts meaningful summaries:
-
-- **JSON** → top-level keys (e.g., `name, version, main, scripts, dependencies`)
-- **YAML** → top-level keys
-- **TOML** → top-level sections/keys (e.g., `[tool.poetry], [build-system]`)
-- **.env** → variable count (e.g., `12 variables`)
-- **Shell configs** → alias/export/function counts (e.g., `9 aliases, 21 exports`)
-- **.gitconfig** → section list (e.g., `user, core, alias, push, pull`)
-- **SSH config** → Host entries
-- **Plists** → top-level keys
-- **INI/CFG** → section headers
-
-A header panel shows aggregate stats: total file count, total size, format
-breakdown, and number of directories scanned.
+---
 
 ## How it works
 
@@ -107,6 +110,8 @@ Config directories that are mostly caches (`.hermes`, `.vscode`, `.lmstudio`,
 top-level files, no recursion. This avoids walking gigabytes of models and
 caches.
 
+---
+
 ## Performance
 
 On a typical macOS system with ~30 config directories:
@@ -122,6 +127,8 @@ On a typical macOS system with ~30 config directories:
 
 Works on macOS and Linux.
 
+---
+
 ## Use cases
 
 - **Audit your dotfiles**: See what's accumulated across years of tool installs
@@ -129,6 +136,20 @@ Works on macOS and Linux.
 - **Discover forgotten settings**: That `.env` from a project you abandoned two years ago
 - **Document your system**: Screenshot the output for a system readme
 - **Clean up**: Identify which config directories are eating disk space
+
+---
+
+## Project links
+
+| | |
+|---|---|
+| **Source** | [github.com/toshon-jennings/config-map](https://github.com/toshon-jennings/config-map) |
+| **PyPI** | [pypi.org/project/config-map](https://pypi.org/project/config-map) |
+| **Issues** | [GitHub Issues](https://github.com/toshon-jennings/config-map/issues) |
+| **Changelog** | [CHANGELOG.md](CHANGELOG.md) |
+| **Contributing** | [CONTRIBUTING.md](CONTRIBUTING.md) |
+
+---
 
 ## Comparison
 
@@ -138,6 +159,8 @@ Works on macOS and Linux.
 | `find ~/.* -type f` | Finds files | config-map groups, classifies, and extracts structure |
 | `du -sh ~/.*` | Shows disk usage | config-map shows *content*, not just size |
 | `mackup` | Backs up configs | config-map audits; doesn't modify anything |
+
+---
 
 ## FAQ
 
@@ -162,6 +185,8 @@ scan time in seconds rather than minutes. Add your own large dotdirs to
 Yes. It reads `~` (the current user's home) so it works anywhere you have a
 home directory and Python 3.7+. It's particularly useful for auditing Linux
 server configs.
+
+---
 
 ## License
 
