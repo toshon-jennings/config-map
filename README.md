@@ -2,10 +2,6 @@
 
 A beautiful terminal map of your configuration files.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/toshon-jennings/config-map/main/assets/demo.png" alt="config-map demo" width="700">
-</p>
-
 Scans `~/.config/` recursively and your top-level dotfiles, then displays each
 file with path, size, last-modified, format, line count, and a **type-specific
 summary** — extracted keys for JSON/YAML/TOML, alias/export counts for shell
