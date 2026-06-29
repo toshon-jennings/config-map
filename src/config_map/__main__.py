@@ -642,12 +642,42 @@ def render_full_report(
     console.print(Rule(style="dim"))
 
 
+def generate_demo_items() -> List[Dict[str, Any]]:
+    """Generate synthetic config file data for screenshots. No real filesystem access."""
+    from datetime import datetime, timedelta
+
+    now = datetime.now()
+    def days_ago(n): return (now - timedelta(days=n)).strftime("%Y-%m-%d %H:%M")
+
+    return [
+        {"path": Path("~/.zshrc"), "size": 2764, "size_human": "2.7 KB", "mtime": days_ago(2), "format": "SHELL", "lines": 81, "label": "Zsh shell config (login shell)", "summary": "9 aliases, 21 exports"},
+        {"path": Path("~/.zshenv"), "size": 590, "size_human": "590 B", "mtime": days_ago(48), "format": "SHELL", "lines": 12, "label": "Zsh shell env (always sourced)", "summary": "3 exports"},
+        {"path": Path("~/.gitconfig"), "size": 412, "size_human": "412 B", "mtime": days_ago(3), "format": "GITCONFIG", "lines": 18, "label": "Git identity & settings", "summary": "user, core, alias, push"},
+        {"path": Path("~/.ssh/config"), "size": 690, "size_human": "690 B", "mtime": days_ago(9), "format": "GITCONFIG", "lines": 17, "label": "SSH keys & config", "summary": "2 hosts: prod-web, dev-api"},
+        {"path": Path("~/.config/gh/config.yml"), "size": 1280, "size_human": "1.3 KB", "mtime": days_ago(14), "format": "YAML", "lines": 42, "label": "GitHub CLI config", "summary": "editor, prompt, aliases, browser"},
+        {"path": Path("~/.config/alacritty/alacritty.toml"), "size": 4200, "size_human": "4.2 KB", "mtime": days_ago(30), "format": "TOML", "lines": 156, "label": "Terminal emulator config", "summary": "font, colors, window, cursor, shell"},
+        {"path": Path("~/.config/nvim/init.lua"), "size": 8192, "size_human": "8.2 KB", "mtime": days_ago(5), "format": "TEXT", "lines": 247, "label": "Neovim config (Lua)", "summary": "plugins, keymaps, lsp, treesitter"},
+        {"path": Path("~/.config/starship.toml"), "size": 1536, "size_human": "1.5 KB", "mtime": days_ago(60), "format": "TOML", "lines": 52, "label": "Cross-shell prompt", "summary": "character, directory, git_branch, package, time"},
+        {"path": Path("~/.config/atuin/config.toml"), "size": 768, "size_human": "768 B", "mtime": days_ago(7), "format": "TOML", "lines": 24, "label": "Shell history DB", "summary": "auto_sync, dialect, search_mode, sync_address"},
+        {"path": Path("~/.docker/config.json"), "size": 340, "size_human": "340 B", "mtime": days_ago(120), "format": "JSON", "lines": 8, "label": "Docker client config", "summary": "auths, credsStore, currentContext"},
+        {"path": Path(".env"), "size": 1280, "size_human": "1.3 KB", "mtime": days_ago(1), "format": "ENV", "lines": 38, "label": "Environment variables", "summary": "12 variables"},
+        {"path": Path("pyproject.toml"), "size": 2048, "size_human": "2.0 KB", "mtime": days_ago(4), "format": "TOML", "lines": 67, "label": "Python project config", "summary": "[project], [build-system], [tool.ruff], [tool.pytest]"},
+        {"path": Path("package.json"), "size": 1856, "size_human": "1.9 KB", "mtime": days_ago(2), "format": "JSON", "lines": 52, "label": "Node.js project manifest", "summary": "name, version, scripts, dependencies, devDependencies"},
+        {"path": Path(".github/workflows/ci.yml"), "size": 920, "size_human": "920 B", "mtime": days_ago(6), "format": "YAML", "lines": 28, "label": "GitHub Actions CI", "summary": "name, on, jobs, steps, uses, run"},
+        {"path": Path("docker-compose.yml"), "size": 1408, "size_human": "1.4 KB", "mtime": days_ago(10), "format": "YAML", "lines": 41, "label": "Docker Compose services", "summary": "version, networks, volumes, build, ports, env_file"},
+        {"path": Path("Cargo.toml"), "size": 1024, "size_human": "1.0 KB", "mtime": days_ago(15), "format": "TOML", "lines": 35, "label": "Rust package manifest", "summary": "[package], [dependencies], [features], [profile.release]"},
+        {"path": Path("~/.aws/credentials"), "size": 256, "size_human": "256 B", "mtime": days_ago(90), "format": "INI", "lines": 6, "label": "AWS credentials", "summary": "[default], [staging]"},
+        {"path": Path("~/.config/1Password/ssh/agent.toml"), "size": 180, "size_human": "180 B", "mtime": days_ago(45), "format": "TOML", "lines": 5, "label": "1Password SSH agent", "summary": "ssh_keys, allowed_buckets"},
+    ]
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Beautiful terminal map of your configuration files.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+    parser.add_argument("--demo", action="store_true", help="Render with synthetic data (for screenshots)")
     parser.add_argument("--dotfiles", action="store_true", help="Only scan top-level dotfiles")
     parser.add_argument("--config", action="store_true", help="Only scan ~/.config/")
     parser.add_argument("--search", type=str, default=None, help="Filter by path/name substring")
@@ -657,20 +687,31 @@ def main():
         default=None,
         help="Minimum file size (e.g., '1k', '100b', '1m')",
     )
-    parser.add_argument("--no-color", action="store_true", help="Disable color output")
+    parser.add_argument("--no-color", action="store_true", help="Disable colored output")
     args = parser.parse_args()
-
-    # Determine scan scope
-    if args.dotfiles and args.config:
-        sys.stderr.write("[ERROR] --dotfiles and --config are mutually exclusive\n")
-        sys.exit(1)
-    include_dotfiles = not args.config
-    include_config = not args.dotfiles
 
     console = Console(
         color_system="truecolor" if not args.no_color else None,
         force_terminal=not args.no_color,
     )
+
+    # ── Demo mode: synthetic data, no filesystem access ─────────────────
+    if args.demo:
+        items = generate_demo_items()
+        title_parts = ["System Config", "18 files"]
+        if args.search:
+            needle = args.search.lower()
+            items = [i for i in items if needle in str(i["path"]).lower()]
+            title_parts.append(f"matching '{args.search}'")
+        render_full_report(items, console, title=" • ".join(title_parts))
+        return
+
+    # ── Real mode: scan filesystem ─────────────────────────────────────
+    if args.dotfiles and args.config:
+        sys.stderr.write("[ERROR] --dotfiles and --config are mutually exclusive\n")
+        sys.exit(1)
+    include_dotfiles = not args.config
+    include_config = not args.dotfiles
 
     files = discover_files(
         roots=[],
