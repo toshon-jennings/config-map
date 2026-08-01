@@ -29,14 +29,16 @@ config-map
 config-map/
 ├── src/config_map/
 │   ├── __init__.py        # Version string, public exports
-│   └── __main__.py        # All logic: discovery, analysis, display
+│   ├── __main__.py        # Discovery, analysis, static display, CLI routing
+│   └── tui.py             # Interactive Textual interface
+├── tests/                 # Search, sorting, and headless interaction tests
 ├── pyproject.toml         # Package metadata, dependencies, entry point
 ├── LICENSE
 └── README.md
 ```
 
-Everything is in one module by design. The tool does one thing and should stay
-understandable in a single file.
+Keep scanner and analyzer changes in `__main__.py`; keep stateful interface
+behavior in `tui.py`.
 
 ## What to contribute
 
@@ -49,13 +51,14 @@ Good candidates:
 Not needed:
 - Alternative output formats (CSV, JSON export) — that's a different tool
 - Config file editing — that's a different tool
-- GUI / TUI — the terminal table is the point
+- Config file editing — config-map remains a read-only browser
 
 ## Code style
 
-- Match the existing structure (functions, not classes)
-- No new dependencies without discussion (the only runtime dep is `rich`)
-- Keep it Python 3.7+ compatible (no 3.10+ syntax)
+- Match the existing functional scanner structure; UI state belongs in the
+  `ConfigMapApp` model
+- Keep runtime dependencies focused on Rich and Textual
+- Keep it Python 3.9+ compatible (no 3.10+ syntax)
 
 ## Submitting changes
 

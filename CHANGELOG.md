@@ -2,6 +2,21 @@
 
 All notable changes to config-map will be documented in this file.
 
+## [1.1.0] — 2026-08-01
+
+### Added
+- Interactive Textual interface when running in a terminal
+- Live multi-term search across paths, formats, purposes, and summaries
+- Keyboard and mouse navigation with a selected-file detail panel
+- Path, size, and modified-date sort modes
+- Non-blocking `r` rescan action
+- `--interactive` and `--no-interactive` interface controls
+
+### Changed
+- Static Rich output is now selected automatically for pipes and redirects
+- Minimum Python version is now 3.9, matching Textual's supported runtime
+- Package version bumped to 1.1.0
+
 ## [1.0.0] — 2026-06-28
 
 ### Added

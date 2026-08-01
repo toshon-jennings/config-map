@@ -7,7 +7,7 @@ each file with path, size, last-modified, format, line count, and a
 type-specific summary (extracted keys for structured formats, counts for
 .env / shell configs, etc.).
 
-Requirements: Python 3.7+ and the `rich` library (pip install rich)
+Requirements: Python 3.9+, Rich, and Textual
 
 Usage:
     config-map                  # full report
@@ -45,7 +45,7 @@ except ImportError:
     sys.exit(1)
 
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 HOME = Path.home()
 
@@ -688,17 +688,38 @@ def main():
         help="Minimum file size (e.g., '1k', '100b', '1m')",
     )
     parser.add_argument("--no-color", action="store_true", help="Disable colored output")
+    interface = parser.add_mutually_exclusive_group()
+    interface.add_argument("--interactive", action="store_true", help="Force the interactive TUI")
+    interface.add_argument(
+        "--no-interactive",
+        action="store_true",
+        help="Render the static report, even in a terminal",
+    )
     args = parser.parse_args()
 
     console = Console(
-        color_system="truecolor" if not args.no_color else None,
-        force_terminal=not args.no_color,
+        color_system="auto" if not args.no_color else None,
+        force_terminal=False if args.no_color else None,
+    )
+
+    interactive = not args.no_color and (
+        args.interactive
+        or (
+            not args.no_interactive
+            and sys.stdin.isatty()
+            and sys.stdout.isatty()
+        )
     )
 
     # ── Demo mode: synthetic data, no filesystem access ─────────────────
     if args.demo:
         items = generate_demo_items()
-        title_parts = ["System Config", "18 files"]
+        title_parts = ["System Config", f"{len(items)} files"]
+        if interactive:
+            from config_map.tui import run_tui
+
+            run_tui(items, " • ".join(title_parts), initial_query=args.search or "")
+            return
         if args.search:
             needle = args.search.lower()
             items = [i for i in items if needle in str(i["path"]).lower()]
@@ -721,7 +742,7 @@ def main():
 
     items = []
     total = len(files)
-    with console.status("[bold cyan]Analyzing 0/{total} files…[/bold cyan]", spinner="dots") as status:
+    with console.status(f"[bold cyan]Analyzing 0/{total} files…[/bold cyan]", spinner="dots") as status:
         for idx, fp in enumerate(files, 1):
             if idx % 50 == 0 or idx == total:
                 status.update(f"[bold cyan]Analyzing {idx}/{total} files…[/bold cyan]")
@@ -729,11 +750,12 @@ def main():
             if info:
                 items.append(info)
 
-    # Apply filters
-    if args.search:
+    # Apply filters. In the TUI, --search seeds the editable live filter.
+    if args.search and not interactive:
         needle = args.search.lower()
         items = [i for i in items if needle in str(i["path"]).lower()]
 
+    min_bytes = None
     if args.min_size:
         size_str = args.min_size.lower().strip()
         multipliers = {"b": 1, "k": 1024, "kb": 1024, "m": 1024**2, "mb": 1024**2, "g": 1024**3}
@@ -757,12 +779,30 @@ def main():
         title_parts.append("~/.config")
     else:
         title_parts.append("System Config")
-    if args.search:
+    if args.search and not interactive:
         title_parts.append(f"matching '{args.search}'")
     if args.min_size:
         title_parts.append(f">= {args.min_size}")
 
-    render_full_report(items, console, title=" • ".join(title_parts))
+    title = " • ".join(title_parts)
+    if interactive:
+        from config_map.tui import run_tui
+
+        def refresh_items() -> List[Dict[str, Any]]:
+            refreshed = []
+            for path in discover_files(
+                roots=[],
+                include_dotfiles=include_dotfiles,
+                include_config=include_config,
+            ):
+                info = file_info(path)
+                if info and (min_bytes is None or info["size"] >= min_bytes):
+                    refreshed.append(info)
+            return refreshed
+
+        run_tui(items, title, initial_query=args.search or "", refresh_callback=refresh_items)
+    else:
+        render_full_report(items, console, title=title)
 
 
 if __name__ == "__main__":

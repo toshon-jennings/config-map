@@ -1,12 +1,12 @@
 # config-map
 
-A beautiful terminal map of your configuration files.
+A searchable terminal map of your configuration files.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/toshon-jennings/config-map/main/assets/demo.png" alt="config-map demo" width="700">
+  <img src="https://raw.githubusercontent.com/toshon-jennings/config-map/main/assets/tui-demo.svg" alt="config-map interactive terminal interface" width="900">
 </p>
 
-Scans `~/.config/` recursively and your top-level dotfiles, then displays each
+Scans `~/.config/` recursively and your top-level dotfiles, then lets you browse each
 file with path, size, last-modified, format, line count, and a **type-specific
 summary** — extracted keys for JSON/YAML/TOML, alias/export counts for shell
 configs, variable counts for `.env`, and more.
@@ -22,9 +22,25 @@ pip install config-map
 config-map
 ```
 
-That's it. You get a rich terminal dashboard showing every config file on your
-machine, grouped by directory, with format, size, line count, and a short
-summary of what each file does.
+That's it. In a terminal, you get an interactive dashboard with live search,
+keyboard and mouse navigation, sorting, file details, and rescanning. When the
+output is piped or redirected, config-map automatically renders its original
+static report instead.
+
+## Interactive controls
+
+| Key | Action |
+|-----|--------|
+| `/` | Focus live search |
+| `Esc` | Clear search and return to the file table |
+| `↑` / `↓` or `j` / `k` | Move through files |
+| `s` | Cycle path, size, and modified-date sorting |
+| `r` | Rescan configuration files in the background |
+| `q` | Quit |
+
+Search matches paths, formats, purposes, and extracted summaries. Multiple
+words narrow the results further, so `toml terminal` finds TOML files whose
+metadata also mentions a terminal.
 
 ---
 
@@ -72,6 +88,8 @@ Options:
   --dotfiles        Only scan top-level dotfiles (~/.zshrc, ~/.gitconfig, etc.)
   --search TEXT     Filter by path/name substring (case-insensitive)
   --min-size SIZE   Only show files >= this size (e.g., 1k, 100k, 1m)
+  --interactive     Force the interactive TUI
+  --no-interactive  Render the static report, even in a terminal
   --no-color        Disable colored output
   --version         Show version
   --help            Show help message
@@ -92,6 +110,9 @@ config-map --dotfiles --search git
 
 # Audit just ~/.config/
 config-map --config
+
+# Keep the classic report for a screenshot or saved text file
+config-map --no-interactive
 ```
 
 ---
@@ -103,8 +124,8 @@ config-map --config
    binary file extensions.
 2. **Analysis** — For each file, detects format and runs the appropriate
    extractor. Large files (>5 MB) are stat'd but never read — keeps it fast.
-3. **Display** — Groups files by parent directory, sorts by size descending,
-   and renders color-coded tables via the `rich` library.
+3. **Display** — Opens a searchable Textual data table in a terminal, or groups
+   files into color-coded Rich tables when using static output.
 
 Config directories that are mostly caches (`.hermes`, `.vscode`, `.lmstudio`,
 `.gemini`, `.claude`, `.cursor`, etc.) are scanned **shallowly** — only
@@ -123,10 +144,11 @@ On a typical macOS system with ~30 config directories:
 
 ## Requirements
 
-- Python 3.7+
-- [rich](https://github.com/Textualize/rich) >= 10.0 (installed automatically)
+- Python 3.9+
+- [Rich](https://github.com/Textualize/rich) >= 10.0 and
+  [Textual](https://github.com/Textualize/textual) >= 6.0 (installed automatically)
 
-Works on macOS and Linux.
+Works on macOS and Linux with Python 3.9+.
 
 ---
 
@@ -184,7 +206,7 @@ scan time in seconds rather than minutes. Add your own large dotdirs to
 **Can I run it on a remote server?**
 
 Yes. It reads `~` (the current user's home) so it works anywhere you have a
-home directory and Python 3.7+. It's particularly useful for auditing Linux
+home directory and Python 3.9+. It's particularly useful for auditing Linux
 server configs.
 
 ---
