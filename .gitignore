@@ -25,3 +25,9 @@ env/
 .pytest_cache/
 .coverage
 htmlcov/
+
+
+# Personal agent working docs — local to the maintainer, not part of the package
+HANDOFF.md
+SUMMARY.md
+HITL.md
