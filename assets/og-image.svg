@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="none" />
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.06" />
+    </pattern>
+    <radialGradient id="glow" cx="60%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#09090b" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="#09090b" />
+  <rect width="1280" height="640" fill="url(#grid)" />
+  <circle cx="800" cy="320" r="500" fill="url(#glow)" />
+  
+  <!-- Content -->
+  <g transform="translate(100, 200)">
+    <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="96" font-weight="800" fill="#ffffff" letter-spacing="-2">
+      config-map
+    </text>
+    
+    <text x="0" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="36" font-weight="400" fill="#a1a1aa">
+      <tspan x="0" dy="0">A searchable terminal map</tspan>
+      <tspan x="0" dy="50">of your configuration files.</tspan>
+      <tspan x="0" dy="50">Fast, local, and read-only.</tspan>
+    </text>
+  </g>
+
+  <!-- Graphic (Right side) -->
+  <g transform="translate(740, 150)">
+    <!-- Terminal Window -->
+    <rect x="0" y="0" width="440" height="340" rx="16" fill="#18181b" stroke="#27272a" stroke-width="2" style="filter: drop-shadow(0 20px 25px rgba(0,0,0,0.5));"/>
+    
+    <!-- Window controls -->
+    <circle cx="24" cy="24" r="6" fill="#ef4444" />
+    <circle cx="44" cy="24" r="6" fill="#eab308" />
+    <circle cx="64" cy="24" r="6" fill="#22c55e" />
+    
+    <!-- Table Header -->
+    <text x="24" y="80" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa" font-weight="bold">File          Format   Size    Modified</text>
+    <rect x="24" y="100" width="392" height="1" fill="#27272a" />
+    
+    <!-- Rows -->
+    <g transform="translate(24, 135)">
+      <text x="0" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#38bdf8">.zshrc</text>
+      <text x="130" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">SHELL</text>
+      <text x="215" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">4.2KB</text>
+      <text x="290" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">Today</text>
+    </g>
+    
+    <g transform="translate(24, 175)">
+      <text x="0" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#f472b6">.gitconfig</text>
+      <text x="130" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">INI</text>
+      <text x="215" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">1.1KB</text>
+      <text x="290" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">Today</text>
+    </g>
+    
+    <g transform="translate(24, 215)">
+      <text x="0" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#fbbf24">nvim/init.lua</text>
+      <text x="130" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">LUA</text>
+      <text x="215" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">8.5KB</text>
+      <text x="290" y="0" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#a1a1aa">Yesterday</text>
+    </g>
+    
+    <!-- Search Bar -->
+    <rect x="24" y="270" width="392" height="40" rx="6" fill="#27272a" />
+    <text x="36" y="295" font-family="'SF Mono', Menlo, Monaco, Consolas, monospace" font-size="16" fill="#10b981">/ search...</text>
+    <rect x="145" y="280" width="2" height="20" fill="#10b981">
+      <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- Footer -->
+  <g transform="translate(100, 540)">
+    <path d="M16 0C7.16 0 0 7.16 0 16C0 23.08 4.58 29.06 10.94 31.18C11.74 31.32 12.04 30.84 12.04 30.42C12.04 30.04 12.02 28.78 12.02 27.44C7.56 28.4 6.62 25.28 6.62 25.28C5.9 23.44 4.88 22.96 4.88 22.96C3.46 22 4.98 22.02 4.98 22.02C6.54 22.12 7.36 23.6 7.36 23.6C8.76 26 10.9 25.3 11.78 24.9C11.92 23.9 12.32 23.2 12.76 22.8C9.2 22.4 5.46 21.04 5.46 14.68C5.46 12.86 6.1 11.38 7.16 10.22C7 9.82 6.42 8.12 7.32 5.86C7.32 5.86 8.7 5.42 12 7.66C13.32 7.3 14.7 7.12 16.08 7.12C17.46 7.12 18.84 7.3 20.16 7.66C23.46 5.42 24.84 5.86 24.84 5.86C25.74 8.12 25.16 9.82 25 10.22C26.06 11.38 26.7 12.86 26.7 14.68C26.7 21.06 22.94 22.4 19.36 22.8C19.9 23.26 20.38 24.16 20.38 25.56C20.38 27.56 20.36 29.18 20.36 29.6C20.36 30.02 20.66 30.52 21.46 30.36C27.84 28.24 32.42 22.24 32.42 15.16C32.42 6.08 25.08 0 16 0Z" fill="#71717a" />
+    <text x="44" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="500" fill="#71717a">toshon-jennings / config-map</text>
+  </g>
+</svg>
