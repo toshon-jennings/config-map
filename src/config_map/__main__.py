@@ -45,7 +45,7 @@ except ImportError:
     sys.exit(1)
 
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 HOME = Path.home()
 
