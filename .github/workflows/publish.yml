@@ -1,58 +1,56 @@
-name: Publish to PyPI and GitHub Packages
+name: Publish to PyPI
 
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 jobs:
-  publish-pypi:
-    name: Build and publish to PyPI
+  build:
+    name: Build distributions
     runs-on: ubuntu-latest
-    environment: pypi
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install build tools
+        run: python -m pip install --upgrade build twine
+
+      - name: Build package
+        run: python -m build
+
+      - name: Check distributions
+        run: python -m twine check dist/*
+
+      - name: Upload distributions
+        uses: actions/upload-artifact@v7
+        with:
+          name: distributions
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/config-map
     permissions:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
+      - name: Download distributions
+        uses: actions/download-artifact@v8
         with:
-          python-version: "3.12"
-
-      - name: Install build tools
-        run: python -m pip install --upgrade build
-
-      - name: Build package
-        run: python -m build
+          name: distributions
+          path: dist/
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-
-  publish-ghp:
-    name: Publish to GitHub Packages
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install build tools
-        run: python -m pip install --upgrade build
-
-      - name: Build package
-        run: python -m build
-
-      - name: Publish to GitHub Packages
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python -m pip install twine
-          python -m twine upload --repository-url https://upload.pypi.pkg.github.com/toshon-jennings/ dist/*
