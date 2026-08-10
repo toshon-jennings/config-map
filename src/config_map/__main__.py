@@ -302,11 +302,15 @@ SKIP_DIRS = {
     "GPUCache", "optimization_cache", "model_cache",
     "node_modules.connector", "packages", "out", "dist",
     "media", "images", "assets", "fonts",
+    "site-packages", "conda", "miniconda", "anaconda",
+    "venv", "envs", "virtualenvs", ".venv",
+    "pkgs", "conda-meta", "share",
 }
 
 # Dotdirs that are mostly cache/data/models — only scan top-level files, don't recurse
 SHALLOW_DOTDIRS = {
     ".hermes", ".vscode", ".cursor", ".openclaw", ".claude",
+    ".claude-science", ".claude-agent",
     ".cache", ".npm", ".cargo", ".rustup", ".bun", ".local",
     ".cups", ".matplotlib", ".streamlit", ".pytest_cache",
     ".agent-browser", ".abacusai-chromium-profile",
@@ -802,7 +806,8 @@ def main():
 
         run_tui(items, title, initial_query=args.search or "", refresh_callback=refresh_items)
     else:
-        render_full_report(items, console, title=title)
+        with console.pager():
+            render_full_report(items, console, title=title)
 
 
 if __name__ == "__main__":
