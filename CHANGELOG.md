@@ -2,6 +2,17 @@
 
 All notable changes to config-map will be documented in this file.
 
+## [1.1.1] — 2026-08-10
+
+### Changed
+- Static report now opens in a pager (e.g. `less`) so long results can be scrolled
+- Scans skip Python environment and package directories (`site-packages`,
+  `venv`, `.venv`, `envs`, `virtualenvs`, `conda`, `miniconda`, `anaconda`,
+  `pkgs`, `conda-meta`, `share`)
+- `~/.claude-science` and `~/.claude-agent` are scanned shallowly (top-level
+  files only), like other cache-heavy dotdirs
+- Releases are published to PyPI only
+
 ## [1.1.0] — 2026-08-01
 
 ### Added
